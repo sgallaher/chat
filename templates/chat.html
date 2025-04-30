@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Secure Chat</title>
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+  <h2>Chat Room</h2>
+  <div id="chat-box"></div>
+  <input id="message" placeholder="Type a message..." />
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    const socket = io();
+    const username = prompt("Enter your name:");
+    const room = "{{ token }}";
+
+    socket.emit("join", { room, username });
+
+    socket.on("message", data => {
+      const chatBox = document.getElementById("chat-box");
+      chatBox.innerHTML += `<p><strong>${data.username || "System"}:</strong> ${data.msg}</p>`;
+    });
+
+    function sendMessage() {
+      const msg = document.getElementById("message").value;
+      socket.emit("message", { msg, room, username });
+      document.getElementById("message").value = "";
+    }
+  </script>
+</body>
+</html>
